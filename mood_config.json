@@ -1,0 +1,10 @@
+{
+    "Calm": { "emoji": "🩵", "color": "#aee1f9" },
+    "Intense": { "emoji": "🔥", "color": "#ff6b6b" },
+    "Nostalgic": { "emoji": "🍂", "color": "#d8a47f" },
+    "Whimsical": { "emoji": "🧚", "color": "#cdb4db" },
+    "Chill": { "emoji": "❄️", "color": "#d0f4f7" },
+    "Uplifting": { "emoji": "☀️", "color": "#fff4b2" },
+    "Dark": { "emoji": "🌑", "color": "#999999" }
+  }
+  

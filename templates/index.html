@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReadShelf</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 class="heading">📚 Your ReadShelf</h1>
+    <p class="subheading">A cozy place to collect what you read ✨</p>
+
+    <a class="add-btn" href="/add">➕ Add Book</a>
+    <a class="add-btn" href="/wishlist">📖 View Wishlist</a>
+    <a class="add-btn" href="/blurb">🔮 Generate My Reader Vibe</a>
+
+    <form method="GET" action="{{ url_for('index') }}" class="mood-filter-form">
+        <label for="mood">Filter by Mood:</label>
+        <select name="mood" id="mood" onchange="this.form.submit()">
+            <option value="">All Moods</option>
+            {% for mood in mood_config %}
+                <option value="{{ mood }}" {% if selected_mood == mood %}selected{% endif %}>
+                    {{ mood }} {{ mood_config[mood]['emoji'] }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="bookshelf">
+        {% for book in books %}
+            {% set mood = book[3] %}
+            {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
+    
+            <div class="book" style="background-color: {{ mood_data.color }}">
+                <div class="mood-emoji">{{ mood_data.emoji }}</div>
+                <div class="title"><strong>{{ book[1] }}</strong></div>
+                <div class="author"><em>{{ book[2] }}</em></div>
+                <div class="rating">⭐ {{ book[5] }}/5</div>
+            </div>
+        {% else %}
+            <p class="empty-msg">Your shelf is empty. Add your first book!</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

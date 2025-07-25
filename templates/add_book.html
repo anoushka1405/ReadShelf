@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Book – ReadShelf</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>➕ Add a Book to Your Shelf</h1>
+    <form method="POST">
+        <label>Title:</label><br>
+        <input type="text" name="title" required><br><br>
+
+        <label>Author:</label><br>
+        <input type="text" name="author" required><br><br>
+
+        <label>Mood:</label><br>
+        <select name="mood" required>
+            {% for mood in mood_options %}
+                <option value="{{ mood }}">{{ mood }}</option>
+            {% endfor %}
+        </select><br><br>
+        
+
+        <label>Rating (1–5):</label><br>
+        <input type="number" name="rating" min="1" max="5"><br><br>
+
+        <label>Review (optional):</label><br>
+        <textarea name="review" rows="4" cols="40"></textarea><br><br>
+
+        <label>Status:</label><br>
+        <select name="status">
+            <option value="read">📚 Shelf</option>
+            <option value="wishlist">📖 Wishlist</option>
+        </select><br><br>
+
+        <button type="submit">Add Book</button>
+    </form>
+
+    <br><a href="/">⬅ Back to Shelf</a>
+</body>
+</html>

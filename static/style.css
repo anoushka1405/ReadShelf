@@ -1,0 +1,163 @@
+body {
+    background: #fdf6f0;
+    font-family: 'Georgia', serif;
+    text-align: center;
+    color: #333;
+    padding: 2rem;
+}
+
+.heading {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subheading {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.add-btn {
+    display: inline-block;
+    background: #8e9aaf;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.bookshelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    background-color: #eee0cb;
+    border-radius: 12px;
+}
+
+.wishlist .bookshelf {
+    background-color: #f0eafc;
+}
+
+
+.book {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    line-height: 1.4;
+}
+
+.book:hover {
+    transform: scale(1.05);
+}
+
+form {
+    background-color: #ffffff;
+    max-width: 500px;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    color: #555;
+}
+
+form input[type="text"],
+form input[type="number"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-family: 'Georgia', serif;
+    background-color: #fdf6f0;
+}
+
+form button {
+    background-color: #8e9aaf;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #7a8191;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    text-decoration: none;
+    color: #555;
+}
+
+.blurb-text {
+    font-size: 1.4em;
+    background: #f0f5f9;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 15px;
+    width: 70%;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.regenerate-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.regenerate-btn {
+    background-color: #ff69b4;
+    color: white;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-align: center;
+}
+
+.regenerate-btn:hover {
+    background-color: #ff4081;
+}
+
+.mood-filter-form {
+    text-align: center;
+    margin-bottom: 30px;
+    font-family: 'Georgia', serif;
+}
+
+.mood-filter-form select {
+    padding: 6px 10px;
+    font-size: 1em;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
