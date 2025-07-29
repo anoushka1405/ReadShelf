@@ -1,45 +1,71 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ReadShelf</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1 class="heading">📚 Your ReadShelf</h1>
-    <p class="subheading">A cozy place to collect what you read ✨</p>
+{% extends "base.html" %}
+{% block title %}Your Shelf{% endblock %}
 
-    <a class="add-btn" href="/add">➕ Add Book</a>
-    <a class="add-btn" href="/reading">📘 Currently Reading</a>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
 
-    <a class="add-btn" href="/wishlist">📖 View Wishlist</a>
-    <a class="add-btn" href="/blurb">🔮 Generate My Reader Vibe</a>
 
-    <form method="GET" action="{{ url_for('index') }}" class="mood-filter-form">
-        <label for="mood">Filter by Mood:</label>
-        <select name="mood" id="mood" onchange="this.form.submit()">
-            <option value="">All Moods</option>
-            {% for mood in mood_config %}
-                <option value="{{ mood }}" {% if selected_mood == mood %}selected{% endif %}>
-                    {{ mood }} {{ mood_config[mood]['emoji'] }}
-                </option>
-            {% endfor %}
-        </select>
-    </form>
+{% block content %}
+<h1 class="heading">📚 Your ReadShelf</h1>
+<p class="subheading">A cozy place to collect what you read ✨</p>
 
-    <div class="bookshelf">
-        {% for book in books %}
-            {% set mood = book[3] %}
-            {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
-    
-            <div class="book" style="background-color: {{ mood_data.color }}">
-                <div class="mood-emoji">{{ mood_data.emoji }}</div>
-                <div class="title"><strong>{{ book[1] }}</strong></div>
-                <div class="author"><em>{{ book[2] }}</em></div>
-                <div class="rating">⭐ {{ book[5] }}/5</div>
-            </div>
-        {% else %}
-            <p class="empty-msg">Your shelf is empty. Add your first book!</p>
+<form method="GET" action="{{ url_for('index') }}" class="mood-filter-form">
+    <label for="mood">Filter by Mood:</label>
+    <select name="mood" id="mood" onchange="this.form.submit()">
+        <option value="">All Moods</option>
+        {% for mood in mood_config %}
+            <option value="{{ mood }}" {% if selected_mood == mood %}selected{% endif %}>
+                {{ mood }} {{ mood_config[mood]['emoji'] }}
+            </option>
         {% endfor %}
+    </select>
+</form>
+
+<div class="bookshelf">
+    {% for book in books %}
+        {% set mood = book[3] %}
+        {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
+
+        <div class="book" 
+             style="background-color: {{ mood_data.color }};" 
+             onclick='showModal({ 
+                id: {{ book[0] }},
+                title: {{ book[1]|tojson }},
+                author: {{ book[2]|tojson }},
+                mood: {{ book[3]|tojson }},
+                review: {{ book[4]|tojson }},
+                rating: {{ book[5] if book[5] is not none else "null" }}
+             })'>
+            <div class="mood-emoji">{{ mood_data.emoji }}</div>
+            <div class="title"><strong>{{ book[1] }}</strong></div>
+            <div class="author"><em>{{ book[2] }}</em></div>
+            <div class="rating">⭐ {{ book[5] }}/5</div>
+        </div>
+    {% else %}
+        <p class="empty-msg">Your shelf is empty. Add your first book!</p>
+    {% endfor %}
+</div>
+
+<!-- Modal -->
+<div id="bookModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
+        <p><strong>Mood:</strong> <span id="modalMood"></span></p>
+        <p><strong>Rating:</strong> <span id="modalRating"></span> / 5</p>
+        <p><strong>Review:</strong></p>
+        <p id="modalReview"></p>
+
+        <form id="deleteForm" method="POST">
+            <button type="submit" class="delete-btn">🗑️ Delete Book</button>
+        </form>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+{% endblock %}

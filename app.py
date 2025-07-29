@@ -115,6 +115,16 @@ def add():
 
     return render_template('add_book.html', mood_options=list(mood_config.keys()))
 
+@app.route("/pomodoro")
+def pomodoro():
+    conn = sqlite3.connect('books.db')
+    c = conn.cursor()
+    c.execute("SELECT id, title FROM books WHERE status='reading' ORDER BY id DESC")
+    books = c.fetchall()
+    conn.close()
+    return render_template("pomodoro.html", books=books)
+
+
 
 
 
@@ -163,6 +173,11 @@ def update_book(book_id):
     conn.close()
 
     return render_template('update_book.html', book=book, mood_options=list(mood_config.keys()))
+
+@app.route('/delete/<int:book_id>', methods=['POST'])
+def delete_book_route(book_id):
+    delete_book(book_id)
+    return redirect(url_for('index'))
 
 
     

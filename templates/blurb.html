@@ -1,89 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Your Literary Vibe – ReadShelf</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            background: #fff9f5;
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-        }
+{% extends "base.html" %}
 
-        .blurb-container {
-            max-width: 700px;
-            margin: 100px auto;
-            padding: 40px;
-            background-color: #fffdf8;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            animation: fadeIn 1.4s ease-out both;
-        }
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='blurb.css') }}">
+{% endblock %}
 
-        .blurb-text {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 30px;
-            white-space: pre-line;
-            line-height: 1.6;
-        }
+{% block content %}
+<div class="blurb-container">
+    <h1>🌟 Your Literary Vibe</h1>
+    <div class="blurb-text">{{ blurb }}</div>
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+    <form method="GET" action="{{ url_for('blurb') }}" class="regenerate-form">
+        <button class="regenerate-btn" type="submit">🔁 Regenerate Vibe</button>
+    </form>
 
-        .regenerate-form {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .regenerate-btn {
-            background-color: #ff69b4;
-            color: white;
-            padding: 10px 22px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .regenerate-btn:hover {
-            background-color: #ff4081;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #555;
-            font-size: 0.95em;
-            border: 1px solid #ccc;
-            padding: 8px 14px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .back-link:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
-</head>
-<body>
-    <div class="blurb-container">
-        <h1>🌟 Your Literary Vibe</h1>
-        <div class="blurb-text">{{ blurb }}</div>
-
-        <!-- Regenerate button -->
-        <form method="GET" action="{{ url_for('blurb') }}" class="regenerate-form">
-            <button class="regenerate-btn" type="submit">🔁 Regenerate Vibe</button>
-        </form>
-
-        <a class="back-link" href="{{ url_for('index') }}">⬅ Back to Shelf</a>
-    </div>
-</body>
-</html>
+    <a class="back-link" href="{{ url_for('index') }}">⬅ Back to Shelf</a>
+</div>
+{% endblock %}

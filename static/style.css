@@ -162,17 +162,179 @@ a {
 }
 
 .mark-read-btn {
-    background-color: #6cbf84;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9em;
+    background-color: #fff6e5;
+    color: #5a4300;
+    border: 1px solid #f3d29c;
+    padding: 4px 10px;
+    border-radius: 18px;
+    font-size: 13.5px;
     cursor: pointer;
-    margin-top: 0.5rem;
-    transition: background 0.3s ease;
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    margin: 4px auto 0;
+    display: block;
 }
 
+
 .mark-read-btn:hover {
-    background-color: #58a76e;
+    background-color: #ffe9b6;
+    transform: scale(1.03);
 }
+
+.mark-read-btn-link {
+    display: inline-block;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Modal background */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    padding-top: 80px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+  
+ /* Modal backdrop */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* translucent black */
+    font-family: 'Georgia', serif;
+  }
+  
+  /* Modal content box */
+  .modal-content {
+    background-color: #fdf6f0;
+    margin: 10% auto;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 480px;
+    color: #333;
+    text-align: left;
+    position: relative;
+  }
+  
+  /* Close button (×) */
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 1.8rem;
+    color: #8e9aaf;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    user-select: none;
+  }
+  
+  .close-btn:hover {
+    color: #5a5a5a;
+  }
+  
+  /* Delete button */
+  .delete-btn {
+    background-color: #ff6b81;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    font-family: 'Georgia', serif;
+  }
+  
+  .delete-btn:hover {
+    background-color: #ff4757;
+  }
+  
+  /* Modal paragraphs */
+  .modal-content p {
+    margin: 0.4rem 0 1rem;
+    line-height: 1.4;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+
+.book {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.book:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(142, 154, 175, 0.4);
+    cursor: pointer;
+}
+
+.book:active {
+    transform: translateY(-2px);
+}
+  
+.pomodoro-timer {
+    background: #f0e6dc;
+    max-width: 320px;
+    margin: 2rem auto;
+    padding: 1.8rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 15px rgba(142, 154, 175, 0.3);
+    font-family: 'Georgia', serif;
+    text-align: center;
+    color: #4b3b2b;
+  }
+  
+  .pomodoro-timer h2 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+  
+  .time-display {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 1rem 0 1.5rem;
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .controls button {
+    background-color: #8e9aaf;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    margin: 0 0.4rem;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Georgia', serif;
+  }
+  
+  .controls button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+  }
+  
+  .controls button:hover:not(:disabled) {
+    background-color: #7a8191;
+  }
+  
+  .session-count {
+    margin-top: 1.3rem;
+    font-size: 1.1rem;
+    color: #5a4e3c;
+  }
+  
