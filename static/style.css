@@ -161,3 +161,18 @@ a {
     border: 1px solid #ccc;
 }
 
+.mark-read-btn {
+    background-color: #6cbf84;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.mark-read-btn:hover {
+    background-color: #58a76e;
+}

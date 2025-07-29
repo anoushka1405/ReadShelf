@@ -3,6 +3,32 @@
 <head>
     <title>Add Book – ReadShelf</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleFields() {
+            const status = document.getElementById("status").value;
+            const moodField = document.getElementById("mood-field");
+            const ratingField = document.getElementById("rating-field");
+            const reviewField = document.getElementById("review-field");
+
+            if (status === "read") {
+                moodField.style.display = "block";
+                ratingField.style.display = "block";
+                reviewField.style.display = "block";
+
+                document.getElementById("mood").required = true;
+                document.getElementById("rating").required = true;
+            } else {
+                moodField.style.display = "none";
+                ratingField.style.display = "none";
+                reviewField.style.display = "none";
+
+                document.getElementById("mood").required = false;
+                document.getElementById("rating").required = false;
+            }
+        }
+
+        window.onload = toggleFields;
+    </script>
 </head>
 <body>
     <h1>➕ Add a Book to Your Shelf</h1>
@@ -13,24 +39,30 @@
         <label>Author:</label><br>
         <input type="text" name="author" required><br><br>
 
-        <label>Mood:</label><br>
-        <select name="mood" required>
-            {% for mood in mood_options %}
-                <option value="{{ mood }}">{{ mood }}</option>
-            {% endfor %}
-        </select><br><br>
-        
+        <div id="mood-field">
+            <label>Mood:</label><br>
+            <select name="mood" id="mood">
+                {% for mood in mood_options %}
+                    <option value="{{ mood }}">{{ mood }}</option>
+                {% endfor %}
+            </select><br><br>
+        </div>
 
-        <label>Rating (1–5):</label><br>
-        <input type="number" name="rating" min="1" max="5"><br><br>
+        <div id="rating-field">
+            <label>Rating (1–5):</label><br>
+            <input type="number" name="rating" id="rating" min="1" max="5"><br><br>
+        </div>
 
-        <label>Review (optional):</label><br>
-        <textarea name="review" rows="4" cols="40"></textarea><br><br>
+        <div id="review-field">
+            <label>Review (optional):</label><br>
+            <textarea name="review" id="review" rows="4" cols="40"></textarea><br><br>
+        </div>
 
         <label>Status:</label><br>
-        <select name="status">
-            <option value="read">📚 Shelf</option>
-            <option value="wishlist">📖 Wishlist</option>
+        <select name="status" id="status" onchange="toggleFields()">
+            <option value="read">📚 Read</option>
+            <option value="reading">📖 Currently Reading</option>
+            <option value="wishlist">📒 Wishlist</option>
         </select><br><br>
 
         <button type="submit">Add Book</button>

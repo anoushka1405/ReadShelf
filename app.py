@@ -3,6 +3,8 @@ from flask import request, redirect, url_for
 from models import init_db, add_book, get_all_books
 from dotenv import load_dotenv
 from models import save_blurb, get_latest_blurb
+import sqlite3
+
 
 import os
 import json
@@ -19,7 +21,7 @@ import google.generativeai as genai
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-
+DB_NAME = 'books.db'
 
 def generate_blurb(prompt):
     try:
@@ -100,10 +102,14 @@ def add():
     if request.method == 'POST':
         title = request.form['title']
         author = request.form['author']
-        mood = request.form['mood']
-        rating = int(request.form['rating'])
-        review = request.form['review']
         status = request.form['status']
+
+        # Optional fields
+        mood = request.form.get('mood') if status == 'read' else None
+        rating = request.form.get('rating')
+        rating = int(rating) if (rating and status == 'read') else None
+        review = request.form.get('review') if status == 'read' else None
+
         add_book(title, author, mood, review, rating, status)
         return redirect(url_for('index'))
 
@@ -111,9 +117,53 @@ def add():
 
 
 
+
+
 def load_mood_config():
     with open('mood_config.json') as f:
         return json.load(f)
+    
+@app.route('/reading')
+def currently_reading():
+    books = get_all_books(status='reading')
+    mood_config = load_mood_config()
+    return render_template('reading.html', books=books, mood_config=mood_config)
+
+@app.route('/mark_read/<int:book_id>', methods=['POST'])
+def mark_read(book_id):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("UPDATE books SET status='read' WHERE id=?", (book_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('currently_reading'))
+
+@app.route('/update_book/<int:book_id>', methods=['GET', 'POST'])
+def update_book(book_id):
+    mood_config = load_mood_config()
+
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        mood = request.form.get('mood')
+        rating = request.form.get('rating')
+        rating = int(rating) if rating else None
+        review = request.form.get('review')
+
+        c.execute("UPDATE books SET mood=?, rating=?, review=?, status='read' WHERE id=?", 
+                  (mood, rating, review, book_id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('index'))
+
+    # GET request - fetch current book details
+    c.execute("SELECT id, title FROM books WHERE id=?", (book_id,))
+    book = c.fetchone()
+    conn.close()
+
+    return render_template('update_book.html', book=book, mood_options=list(mood_config.keys()))
+
 
     
 

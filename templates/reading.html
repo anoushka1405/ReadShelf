@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ReadShelf</title>
+    <title>Currently Reading | ReadShelf</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1 class="heading">📚 Your ReadShelf</h1>
-    <p class="subheading">A cozy place to collect what you read ✨</p>
+    <h1 class="heading">📘 Currently Reading</h1>
+    <p class="subheading">Your current adventures await 📖</p>
 
+    <a class="add-btn" href="/">🏠 Back to Shelf</a>
     <a class="add-btn" href="/add">➕ Add Book</a>
-    <a class="add-btn" href="/reading">📘 Currently Reading</a>
+    <a class="add-btn" href="/wishlist">📖 Wishlist</a>
 
-    <a class="add-btn" href="/wishlist">📖 View Wishlist</a>
-    <a class="add-btn" href="/blurb">🔮 Generate My Reader Vibe</a>
-
-    <form method="GET" action="{{ url_for('index') }}" class="mood-filter-form">
+    <form method="GET" action="{{ url_for('currently_reading') }}" class="mood-filter-form">
         <label for="mood">Filter by Mood:</label>
         <select name="mood" id="mood" onchange="this.form.submit()">
             <option value="">All Moods</option>
@@ -26,19 +24,25 @@
         </select>
     </form>
 
-    <div class="bookshelf">
+    <div class="bookshelf wishlist">
         {% for book in books %}
             {% set mood = book[3] %}
-            {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
-    
+            {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#e0f7ff'}) %}
+
             <div class="book" style="background-color: {{ mood_data.color }}">
                 <div class="mood-emoji">{{ mood_data.emoji }}</div>
                 <div class="title"><strong>{{ book[1] }}</strong></div>
                 <div class="author"><em>{{ book[2] }}</em></div>
                 <div class="rating">⭐ {{ book[5] }}/5</div>
+                <a href="{{ url_for('update_book', book_id=book[0]) }}">
+                    <button>Mark as Read</button>
+                </a>
+                
+                </form>
+            </div>
             </div>
         {% else %}
-            <p class="empty-msg">Your shelf is empty. Add your first book!</p>
+            <p class="empty-msg">You’re not reading anything right now. Add a current read!</p>
         {% endfor %}
     </div>
 </body>
