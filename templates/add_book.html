@@ -7,9 +7,20 @@
 
 {% block content %}
 <h1>➕ Add a Book to Your Shelf</h1>
-<form method="POST">
+<form method="POST" action="/add" id="addBookForm">
+
+
+
+    <label>Status:</label><br>
+    <select name="status" id="status" onchange="toggleFields()">
+        <option value="read">📚 Read</option>
+        <option value="reading">📖 Currently Reading</option>
+        <option value="wishlist">📒 Wishlist</option>
+    </select><br><br>
+
     <label>Title:</label><br>
-    <input type="text" name="title" required><br><br>
+    <input type="text" name="title" id="titleInput" required>
+
 
     <label>Author:</label><br>
     <input type="text" name="author" required><br><br>
@@ -33,12 +44,21 @@
         <textarea name="review" id="review" rows="4" cols="40"></textarea><br><br>
     </div>
 
-    <label>Status:</label><br>
-    <select name="status" id="status" onchange="toggleFields()">
-        <option value="read">📚 Read</option>
-        <option value="reading">📖 Currently Reading</option>
-        <option value="wishlist">📒 Wishlist</option>
-    </select><br><br>
+    <label>Cover Image URL (optional):</label><br>
+    <input type="url" id="manual-thumbnail" placeholder="Paste image URL here"><br><br>
+
+
+    <!-- 🔍 Hidden fields for Google Books metadata -->
+    <input type="hidden" name="page_count" id="page-count">
+    <input type="hidden" name="description" id="book-description">
+    <input type="hidden" name="thumbnail" id="thumbnailInput">
+    <input type="hidden" name="categories" id="book-categories">
+
+    <!-- 🖼️ Optional: Preview book cover -->
+    <div id="cover-preview" style="display:none;">
+        <label>Cover Preview:</label><br>
+        <img id="cover-image" src="" alt="Book Cover" style="max-height: 150px;"><br><br>
+    </div>
 
     <button type="submit">Add Book</button>
 </form>

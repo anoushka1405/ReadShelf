@@ -338,3 +338,16 @@ a {
     color: #5a4e3c;
   }
   
+  .book-cover {
+    max-height: 160px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.book-cover {
+    width: 100px;
+    height: auto;
+    object-fit: cover;
+}

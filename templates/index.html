@@ -28,20 +28,34 @@
         {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
 
         <div class="book" 
-             style="background-color: {{ mood_data.color }};" 
-             onclick='showModal({ 
-                id: {{ book[0] }},
-                title: {{ book[1]|tojson }},
-                author: {{ book[2]|tojson }},
-                mood: {{ book[3]|tojson }},
-                review: {{ book[4]|tojson }},
-                rating: {{ book[5] if book[5] is not none else "null" }}
-             })'>
-            <div class="mood-emoji">{{ mood_data.emoji }}</div>
-            <div class="title"><strong>{{ book[1] }}</strong></div>
-            <div class="author"><em>{{ book[2] }}</em></div>
-            <div class="rating">⭐ {{ book[5] }}/5</div>
-        </div>
+        style="background-color: {{ mood_data.color }};" 
+        onclick='showModal({ 
+            id: {{ book[0] }},
+            title: {{ book[1]|tojson }},
+            author: {{ book[2]|tojson }},
+            mood: {{ book[3]|tojson }},
+            review: {{ book[4]|tojson }},
+            rating: {{ book[5] if book[5] is not none else "null" }},
+            thumbnail: {{ book[9]|tojson }},
+            description: {{ book[8]|tojson }},
+            link: {{ book[10]|tojson }}
+        })'>
+        
+   
+    
+     
+    {% if book[9] %}
+        <img src="{{ book[9] }}" alt="Cover of {{ book[1] }}" class="book-cover">
+    {% else %}
+        <div class="placeholder-cover">📘</div>
+    {% endif %}
+
+    <div class="mood-emoji">{{ mood_data.emoji }}</div>
+    <div class="title"><strong>{{ book[1] }}</strong></div>
+    <div class="author"><em>{{ book[2] }}</em></div>
+    <div class="rating">⭐ {{ book[5] }}/5</div>
+</div>
+
     {% else %}
         <p class="empty-msg">Your shelf is empty. Add your first book!</p>
     {% endfor %}
@@ -50,19 +64,34 @@
 <!-- Modal -->
 <div id="bookModal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
-        <p><strong>Mood:</strong> <span id="modalMood"></span></p>
-        <p><strong>Rating:</strong> <span id="modalRating"></span> / 5</p>
-        <p><strong>Review:</strong></p>
-        <p id="modalReview"></p>
+        <!-- 🖼️ Cover Image -->
+        <img id="modalThumbnail" src="" alt="Book Cover" class="modal-cover">
 
-        <form id="deleteForm" method="POST">
-            <button type="submit" class="delete-btn">🗑️ Delete Book</button>
-        </form>
+        <div id="goodreads-helper" class="goodreads-helper" style="display: none;"></div>
+
+
+        <div class="modal-details">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
+            <p><strong>Mood:</strong> <span id="modalMood"></span></p>
+            <p><strong>Rating:</strong> <span id="modalRating"></span> / 5</p>
+
+            <p><strong>Review:</strong></p>
+            <p id="modalReview" class="expandable"></p>
+            
+
+            <p><strong>Description:</strong></p>
+            <p id="modalDescription" class="expandable"></p>
+
+
+            <form id="deleteForm" method="POST">
+                <button type="submit" class="delete-btn">🗑️ Delete Book</button>
+            </form>
+        </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}

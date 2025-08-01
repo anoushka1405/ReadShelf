@@ -7,7 +7,7 @@ def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    # Books table
+    # Create books table if it doesn't exist
     c.execute('''
         CREATE TABLE IF NOT EXISTS books (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,11 +16,15 @@ def init_db():
             mood TEXT,
             review TEXT,
             rating INTEGER,
-            status TEXT
+            status TEXT,
+            page_count INTEGER,
+            description TEXT,
+            thumbnail TEXT,
+            categories TEXT
         )
     ''')
 
-    # Blurbs table
+    # Create blurbs table
     c.execute('''
         CREATE TABLE IF NOT EXISTS blurbs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,14 +36,19 @@ def init_db():
     conn.close()
 
 # 📚 Book Management
-def add_book(title, author, mood, review, rating, status):
+def add_book(title, author, mood, review, rating, status,
+             page_count=None, description=None, thumbnail=None, categories=None):
     """Add a new book to the database."""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute('''
-        INSERT INTO books (title, author, mood, review, rating, status)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (title, author, mood, review, rating, status))
+        INSERT INTO books (
+            title, author, mood, review, rating, status,
+            page_count, description, thumbnail, categories
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (title, author, mood, review, rating, status,
+          page_count, description, thumbnail, categories))
     conn.commit()
     conn.close()
 

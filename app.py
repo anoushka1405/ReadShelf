@@ -7,6 +7,7 @@ import json
 import requests
 import google.generativeai as genai
 
+
 # 🌱 Environment Setup
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -51,22 +52,67 @@ def currently_reading():
     mood_config = load_mood_config()
     return render_template('reading.html', books=books, mood_config=mood_config)
 
-@app.route('/add', methods=['GET', 'POST'])
-def add():
+def get_book_cover(title):
+    # Try Google Books
+    gb_url = f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}"
+    gb_response = requests.get(gb_url).json()
+    try:
+        return gb_response['items'][0]['volumeInfo']['imageLinks']['thumbnail']
+    except (KeyError, IndexError):
+        pass
+
+    # Fallback to Open Library
+    ol_url = f"https://openlibrary.org/search.json?title={title}"
+    ol_response = requests.get(ol_url).json()
+    try:
+        cover_id = ol_response['docs'][0]['cover_i']
+        return f"https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
+    except (KeyError, IndexError):
+        return None
+
+@app.route('/api/fetch-cover', methods=['POST'])
+def fetch_cover():
+    data = request.json
+    title = data.get('title')
+    cover_url = get_book_cover(title)
+    return jsonify({'cover_url': cover_url})
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add_book_route():
+    if request.method == "POST":
+        print("📘 Form submitted!") 
+        status = request.form["status"]
+        title = request.form["title"]
+        author = request.form["author"]
+        mood = request.form.get("mood")
+        rating = request.form.get("rating")
+        review = request.form.get("review")
+
+        page_count = request.form.get("page_count")
+        description = request.form.get("description")
+        thumbnail = request.form.get("thumbnail")
+        categories = request.form.get("categories")
+
+        add_book(
+            title=title,
+            author=author,
+            mood=mood,
+            review=review,
+            rating=rating,
+            status=status,
+            page_count=page_count,
+            description=description,
+            thumbnail=thumbnail,
+            categories=categories
+        )
+
+        return redirect("/")
+
+    # 👇 This ensures the dropdown is populated
     mood_config = load_mood_config()
-    if request.method == 'POST':
-        title = request.form['title']
-        author = request.form['author']
-        status = request.form['status']
-        mood = request.form.get('mood') if status == 'read' else None
-        rating = request.form.get('rating')
-        rating = int(rating) if (rating and status == 'read') else None
-        review = request.form.get('review') if status == 'read' else None
+    return render_template("add_book.html", mood_options=list(mood_config.keys()))
 
-        add_book(title, author, mood, review, rating, status)
-        return redirect(url_for('index'))
-
-    return render_template('add_book.html', mood_options=list(mood_config.keys()))
 
 @app.route('/update_book/<int:book_id>', methods=['GET', 'POST'])
 def update_book(book_id):
@@ -98,7 +144,7 @@ def delete_book_route(book_id):
 
 @app.route('/mark_read/<int:book_id>', methods=['POST'])
 def mark_read(book_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(books.db)
     c = conn.cursor()
     c.execute("UPDATE books SET status='read' WHERE id=?", (book_id,))
     conn.commit()
