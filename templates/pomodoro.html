@@ -3,44 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ReadShelf - Pomodoro Timer</title>
+  <title>ReadShelf - Read With Me</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='pomodoro.css') }}">
 </head>
 <body>
+  <h1 style="text-align: center;">📚 Read With Me</h1>
 
-  <h1>🍅 Read With Me Pomodoro Timer</h1>
-
-  <div class="current-reading">
-    {% if books|length > 1 %}
-      <label for="book-select">📖 Currently Reading:</label>
-      <select id="book-select" name="book">
-        {% for book in books %}
-          <option value="{{ book[0] }}">{{ book[1] }}</option>
-        {% endfor %}
-      </select>
-    {% elif books|length == 1 %}
-      <div>📖 Reading: <strong>{{ books[0][1] }}</strong></div>
-    {% else %}
-      <div>You don’t have a book marked as "Currently Reading".</div>
-    {% endif %}
-  </div>
-
-  <div class="pomodoro-timer">
-    <h2>Focus Time</h2>
-    <div id="time" class="time-display">25:00</div>
-
-    <div class="controls">
-      <button id="start-btn">▶️ Start</button>
-      <button id="pause-btn" disabled>⏸ Pause</button>
-      <button id="reset-btn">🔄 Reset</button>
+  <div class="read-with-me-container">
+    <!-- Word Vault -->
+    <div class="vault">
+      <h3>📖 Word Vault</h3>
+    
+      <form id="word-form" class="word-form">
+        <input type="text" id="word-input" placeholder="Enter a word..." required>
+        <button type="submit">🔍 Define</button>
+      </form>
+    
+      <ul id="word-list">
+        <!-- Dynamically added words go here -->
+      </ul>
     </div>
 
-    <div id="session-count" class="session-count">Sessions completed: 0</div>
-    <div id="total-time" class="session-count">Total read time: 0 mins</div>
+    <!-- Pomodoro Timer -->
+    <div class="pomodoro-panel">
+      <h2>🍅 Pomodoro Timer</h2>
+      <div class="current-reading">
+        {% if books|length > 1 %}
+          <label for="book-select">Currently Reading:</label>
+          <select id="book-select" name="book">
+            {% for book in books %}
+              <option value="{{ book[0] }}">{{ book[1] }}</option>
+            {% endfor %}
+          </select>
+        {% elif books|length == 1 %}
+          <div>Reading: <strong>{{ books[0][1] }}</strong></div>
+        {% else %}
+          <div>No book marked as "Currently Reading".</div>
+        {% endif %}
+      </div>
+
+      <div class="pomodoro-timer">
+        <div id="time" class="time-display">25:00</div>
+        <div class="controls">
+          <button id="start-btn">▶️ Start</button>
+          <button id="pause-btn" disabled>⏸ Pause</button>
+          <button id="reset-btn">🔄 Reset</button>
+        </div>
+        <div id="session-count" class="session-count">Sessions completed: 0</div>
+        <div id="total-time" class="session-count">Total read time: 0 mins</div>
+      </div>
+    </div>
+
+    <!-- ReadBot -->
+    <div class="chatbot">
+      <h3>🤖 ReadBot</h3>
+      <div class="chat-window" id="chat-window">
+        <p><strong>Bot:</strong> I'm here if you need a reading buddy!</p>
+      </div>
+    </div>
   </div>
 
-  <a href="{{ url_for('index') }}" class="home-link">⬅ Back to ReadShelf</a>
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('index') }}" class="home-link">⬅ Back to ReadShelf</a>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="{{ url_for('static', filename='pomodoro.js') }}"></script>
