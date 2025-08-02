@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from models import init_db, add_book, get_all_books, save_blurb, get_latest_blurb, delete_book
+from readbot import generate_readbot_reply
 from dotenv import load_dotenv
 import sqlite3
 import os
@@ -201,6 +202,34 @@ def define_word(word):
             return jsonify({'error': 'Definition not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    message = data['message']
+    book_title = data['book_title']
+    progress_info = data['progress_info']  # can be "Chapter 7", "Page 150", etc.
+
+    reply = generate_readbot_reply(message, book_title, progress_info)
+    return jsonify({'response': reply})
+
+@app.route('/readbot', methods=['POST'])
+def readbot_reply():
+    data = request.get_json()
+    user_message = data.get('message')
+    book_title = data.get('bookTitle')
+    user_progress = data.get('userProgress')
+
+    try:
+        from readbot import generate_readbot_reply
+        bot_reply = generate_readbot_reply(user_message, book_title, user_progress)
+        return jsonify({'reply': bot_reply})
+    except Exception as e:
+        print(f"[ReadBot Error]: {e}")
+        return jsonify({'reply': "Hmm... I’m having trouble thinking right now. Mind trying again?"})
+
+
+
 
 # 🔧 Utility
 def load_mood_config():

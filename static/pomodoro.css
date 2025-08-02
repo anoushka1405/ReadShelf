@@ -50,7 +50,7 @@ h1 {
   margin: 0 auto;
 }
 
-.vault, .pomodoro-panel, .chatbot {
+.vault, .pomodoro-panel{
   background-color: #fff;
   border: 1px solid #e2d8cf;
   border-radius: 12px;
@@ -60,20 +60,10 @@ h1 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.vault h3, .pomodoro-panel h2, .chatbot h3 {
+.vault h2, .pomodoro-panel h2, .chatbot h2 {
   color: #5d4b3c;
   margin-bottom: 1rem;
   text-align: center;
-}
-
-/* Make the chat window scrollable */
-.chat-window {
-  background: #f7f3ee;
-  padding: 1rem;
-  border-radius: 8px;
-  height: 250px;
-  overflow-y: auto;
-  text-align: left;
 }
 
 /* Timer display in the center */
@@ -121,7 +111,7 @@ h1 {
   background: #f7f3ee;
   padding: 1rem;
   border-radius: 8px;
-  height: 150px;
+  height:300px;
   overflow-y: auto;
   text-align: left;
 }
@@ -215,3 +205,4 @@ h1 {
   margin-bottom: 8px;
   color: #333;
 }
+

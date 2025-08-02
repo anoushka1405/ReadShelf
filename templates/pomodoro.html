@@ -14,15 +14,11 @@
     <!-- Word Vault -->
     <div class="vault">
       <h3>📖 Word Vault</h3>
-    
       <form id="word-form" class="word-form">
         <input type="text" id="word-input" placeholder="Enter a word..." required>
         <button type="submit">🔍 Define</button>
       </form>
-    
-      <ul id="word-list">
-        <!-- Dynamically added words go here -->
-      </ul>
+      <ul id="word-list"></ul>
     </div>
 
     <!-- Pomodoro Timer -->
@@ -54,21 +50,33 @@
         <div id="total-time" class="session-count">Total read time: 0 mins</div>
       </div>
     </div>
+  </div> <!-- close read-with-me-container -->
 
-    <!-- ReadBot -->
-    <div class="chatbot">
-      <h3>🤖 ReadBot</h3>
-      <div class="chat-window" id="chat-window">
-        <p><strong>Bot:</strong> I'm here if you need a reading buddy!</p>
-      </div>
-    </div>
+<!-- 📌 ReadBot Section -->
+<div class="chatbot">
+  <h3>🤖 ReadBot</h3>
+  <div class="chat-window" id="chat-window">
+    <p class="bot-message"><strong>Bot:</strong> I'm here if you need a reading buddy!</p>
   </div>
+  <form class="chat-input-area" id="chat-form">
+    <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" required />
+    <button type="submit">Send</button>
+  </form>
+</div>
 
-  <div style="text-align: center; margin-top: 2rem;">
-    <a href="{{ url_for('index') }}" class="home-link">⬅ Back to ReadShelf</a>
-  </div>
+<div style="text-align:center; margin-top: 1.5rem;">
+  <a href="{{ url_for('index') }}" class="home-link">← Back to ReadShelf</a>
+</div>
 
+
+
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="{{ url_for('static', filename='pomodoro.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='readbot.css') }}">
+  <script src="{{ url_for('static', filename='readbot.js') }}"></script>
 </body>
+
+  
 </html>

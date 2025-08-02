@@ -1,0 +1,112 @@
+/* Chatbot container styling (shared with vault and pomodoro) */
+.chatbot {
+    background-color: #fff;
+    border: 1px solid #e2d8cf;
+    border-radius: 12px;
+    padding: 1rem;
+    flex: 1 1 30%;
+    min-height: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Chatbot heading */
+  .chatbot h3 {
+    color: #5d4b3c;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  /* Chat window styling */
+  .chat-window {
+    background: #f7f3ee;
+    padding: 1rem;
+    border-radius: 8px;
+    height: 300px;
+    overflow-y: auto;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  
+  /* Messages */
+  .chat-window p {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 1rem;
+    line-height: 1.3;
+    word-wrap: break-word;
+    margin: 0;
+  }
+  
+  /* Bot message (left aligned) */
+  .bot-message {
+    background-color: #d6ccc2;
+    align-self: flex-start;
+    border-bottom-left-radius: 0;
+    color: #3e342e;
+    margin-bottom: 1rem;
+  }
+  
+  /* User message (right aligned) */
+  .user-message {
+    background-color: #5d4b3c;
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 0;
+    margin-bottom: 1rem;
+  }
+  
+  /* Chat input container */
+  .chat-input-area {
+    display: flex;
+    margin-top: 1rem;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  /* Input field */
+  .chat-input-area input[type="text"] {
+    flex-grow: 1;
+    padding: 10px 14px;
+    border: 1px solid #d6ccc2;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #fefefe;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s ease;
+    outline-offset: 0;
+    outline: none;
+  }
+  
+  .chat-input-area input[type="text"]:focus {
+    border-color: #c0a98d;
+    box-shadow: 0 0 0 3px rgba(192, 169, 141, 0.2);
+  }
+  
+  /* Send button */
+  .chat-input-area button {
+    background-color: #5d4b3c;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    min-width: 70px;
+    align-self: stretch;
+  }
+  
+  .chat-input-area button:hover {
+    background-color: #4a3d30;
+  }
+
+  .bot-message.typing {
+    font-style: italic;
+    color: #7a6d63;
+    opacity: 0.7;
+  }
+  
