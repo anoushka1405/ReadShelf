@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}📊 Reading Stats{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='stats.css') }}">
+  <style>
+    h1, h2, h3 {
+      text-align: center;
+    }
+
+    .stats-section {
+      margin: 2rem auto;
+      max-width: 900px;
+    }
+
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .card {
+      background-color: #f9f9f9;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-width: 180px;
+      flex: 1 1 200px;
+      max-width: 280px;
+    }
+
+    .card strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .book-entry {
+      font-size: 0.95rem;
+      margin: 0.3rem 0;
+      padding-left: 0.2rem;
+    }
+
+    .mood-card {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .mood-card:hover {
+      transform: scale(1.02);
+      background-color: #f0faff;
+    }
+
+    .charts-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .chart-box {
+      flex: 1 1 300px;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 3rem;
+      text-decoration: none;
+      color: #0077cc;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1>📊 My Reading Stats</h1>
+
+  <div class="stats-section">
+    <p><strong>Total books read:</strong> {{ total_books }}</p>
+    <p><strong>Average rating:</strong> {{ avg_rating }}</p>
+    <p><strong>Most common mood:</strong> {{ most_common_mood }}</p>
+  </div>
+
+  <div class="stats-section">
+    <h2>📚 Top 3 Books</h2>
+    <div class="card-grid">
+      {% for book in top_books %}
+        <div class="card">
+          <strong>{{ book.title }}</strong>
+          ⭐ {{ book.rating }}/5
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>🎨 Mood Distribution</h2>
+    <div class="card-grid">
+      {% for mood, count in mood_counts.items() %}
+        <div class="card mood-card" onclick="toggleBooks('{{ mood|replace(' ', '_') }}')">
+          <strong>{{ mood }}</strong>
+          {{ count }} book{{ 's' if count != 1 }}
+          <div id="books-{{ mood|replace(' ', '_') }}" class="book-list" style="display: none; margin-top: 0.8rem;">
+            {% for book in mood_books[mood] %}
+              <div class="book-entry">📖 {{ book.title }} — ⭐ {{ book.rating }}/5</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>📈 Visual Charts</h2>
+    <div class="charts-container">
+      <div class="chart-box">
+        <h3>Mood Distribution</h3>
+        <canvas id="moodChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Average Rating by Mood</h3>
+        <canvas id="ratingByMoodChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Books per Rating</h3>
+        <canvas id="booksPerRatingChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <a href="{{ url_for('index') }}" class="back-link">← Back to shelf</a>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function toggleBooks(moodId) {
+      const list = document.getElementById("books-" + moodId);
+      list.style.display = (list.style.display === "none") ? "block" : "none";
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const moodColorMap = {{ mood_colors | tojson }};
+    const moodLabels = {{ mood_counts.keys() | list | tojson }};
+    const moodValues = {{ mood_counts.values() | list | tojson }};
+    const moodBackgrounds = moodLabels.map(mood => moodColorMap[mood] || '#ccc');
+
+    new Chart(document.getElementById('moodChart'), {
+      type: 'pie',
+      data: {
+        labels: moodLabels,
+        datasets: [{
+          data: moodValues,
+          backgroundColor: moodBackgrounds
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    const ratingMoods = {{ avg_rating_by_mood.keys() | list | tojson }};
+    const ratingValues = {{ avg_rating_by_mood.values() | list | tojson }};
+    const ratingColors = ratingMoods.map(mood => moodColorMap[mood] || '#ccc');
+
+    new Chart(document.getElementById('ratingByMoodChart'), {
+      type: 'bar',
+      data: {
+        labels: ratingMoods,
+        datasets: [{
+          label: 'Avg Rating',
+          data: ratingValues,
+          backgroundColor: ratingColors
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('booksPerRatingChart'), {
+      type: 'bar',
+      data: {
+        labels: {{ books_per_rating.keys() | list | tojson }},
+        datasets: [{
+          label: 'Books',
+          data: {{ books_per_rating.values() | list | tojson }},
+          backgroundColor: '#ffc6ff'
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+{% endblock %}

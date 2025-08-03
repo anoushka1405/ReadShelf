@@ -9,6 +9,8 @@
 {% block content %}
 <h1 class="heading">📚 Your ReadShelf</h1>
 <p class="subheading">A cozy place to collect what you read ✨</p>
+<a href="/export-pdf" class="btn">📄 Export Shelf as PDF</a><br><br>
+
 
 <form method="GET" action="{{ url_for('index') }}" class="mood-filter-form">
     <label for="mood">Filter by Mood:</label>

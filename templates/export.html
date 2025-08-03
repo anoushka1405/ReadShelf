@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ReadShelf Export</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 2rem; }
+    h1, h2 { color: #333; }
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .book-card {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #f9f9f9;
+      break-inside: avoid;
+    }
+    .charts {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .chart-img {
+      max-width: 300px;
+      max-height: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 ReadShelf Summary</h1>
+
+  <h2>Your Shelf</h2>
+  <div class="book-grid">
+    {% for book in books %}
+    <div class="book-card">
+      <strong>{{ book.title }}</strong><br>
+      <em>{{ book.author or "Unknown Author" }}</em><br>
+      Mood: {{ book.mood or "N/A" }}<br>
+      Rating: {{ book.rating or "N/A" }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2>Stats</h2>
+  <div class="charts">
+    <div>
+      <h3>Books by Mood</h3>
+      <img class="chart-img" src="data:image/png;base64,{{ pie_chart }}" alt="Books by Mood Pie Chart" />
+    </div>
+    <div>
+      <h3>Average Rating by Mood</h3>
+      <img class="chart-img" src="data:image/png;base64,{{ bar_chart }}" alt="Average Rating by Mood Bar Chart" />
+    </div>
+    <div>
+      <h3>Books per Rating</h3>
+      <img class="chart-img" src="data:image/png;base64,{{ rating_chart }}" alt="Books per Rating Bar Chart" />
+    </div>
+  </div>
+</body>
+</html>

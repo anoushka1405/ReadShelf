@@ -4,6 +4,7 @@
     <title>{% block title %}ReadShelf{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -15,6 +16,7 @@
                 <li><a href="/blurb">🔮 Create Reader Vibe</a></li>
                 <li><a href="/pomodoro">🍅 Pomodoro</a></li>
                 <li><a href="{{ url_for('add_book_route') }}">➕ Add Book</a></li>
+                <a href="{{ url_for('stats') }}" class="stats-btn">📊 View Stats</a>
 
 
             </ul>
