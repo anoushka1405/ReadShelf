@@ -1,0 +1,112 @@
+h1, h2, h3 {
+    text-align: center;
+  }
+  
+  .stats-section {
+    margin: 2rem auto;
+    max-width: 900px;
+  }
+  
+  .card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+  
+  .card {
+    background-color: #f9f9f9;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    min-width: 180px;
+    flex: 1 1 200px;
+    max-width: 280px;
+    transition: transform 0.2s ease;
+  }
+  
+  .card strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .card:hover {
+    transform: scale(1.02);
+  }
+  
+  .book-entry {
+    font-size: 0.95rem;
+    margin: 0.3rem 0;
+    padding-left: 0.2rem;
+  }
+  
+  .mood-card {
+    cursor: pointer;
+    background-color: #fff;
+    border-left: 6px solid #ccc;
+  }
+  
+  .charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .chart-box {
+    flex: 1 1 300px;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 3rem;
+    text-decoration: none;
+    color: #0077cc;
+  }
+  
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  
+  .book-list {
+    margin-top: 0.8rem;
+    display: none;
+  }
+  
+  .book-list.expanded {
+    display: block;
+  }
+
+  .top-book-card {
+    text-align: center;
+    padding-top: 1.2rem;
+  }
+  
+  .top-book-cover {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .top-book-placeholder {
+    font-size: 3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+

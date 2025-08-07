@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response,session
 from models import init_db, add_book, get_all_books, save_blurb, get_latest_blurb, delete_book
 from readbot import generate_readbot_reply
 from dotenv import load_dotenv
@@ -26,6 +26,9 @@ else:
 
 DB_NAME = 'books.db'
 app = Flask(__name__)
+
+app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 # ✨ Gemini Blurb Generator
 def generate_blurb(prompt):
@@ -56,9 +59,10 @@ def wishlist():
 
 @app.route('/reading')
 def currently_reading():
-    books = get_all_books(status='reading')
+    books = get_all_books(status='currently_reading')  # ✅ fixed
     mood_config = load_mood_config()
     return render_template('reading.html', books=books, mood_config=mood_config)
+
 
 def get_book_cover(title):
     # Try Google Books
@@ -152,7 +156,7 @@ def delete_book_route(book_id):
 
 @app.route('/mark_read/<int:book_id>', methods=['POST'])
 def mark_read(book_id):
-    conn = sqlite3.connect(books.db)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("UPDATE books SET status='read' WHERE id=?", (book_id,))
     conn.commit()
@@ -191,7 +195,8 @@ def latest_blurb():
 def pomodoro():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute("SELECT id, title FROM books WHERE status='reading' ORDER BY id DESC")
+    c.execute("SELECT id, title FROM books WHERE status='currently_reading' ORDER BY id DESC")
+
     books = c.fetchall()
     conn.close()
     return render_template("pomodoro.html", books=books)
@@ -228,17 +233,36 @@ def readbot_reply():
     user_progress = data.get('userProgress')
 
     try:
+        # Restore or start chat history
+        if 'chat_history' not in session:
+            session['chat_history'] = []
+
+        chat_history = session['chat_history']
+
         from readbot import generate_readbot_reply
-        bot_reply = generate_readbot_reply(user_message, book_title, user_progress)
+        bot_reply = generate_readbot_reply(
+            user_message=user_message,
+            book_title=book_title,
+            user_progress=user_progress,
+            chat_history=chat_history
+        )
+
+        # Save the new turn
+        chat_history.append({'user': user_message, 'bot': bot_reply})
+        session['chat_history'] = chat_history
+
         return jsonify({'reply': bot_reply})
     except Exception as e:
         print(f"[ReadBot Error]: {e}")
         return jsonify({'reply': "Hmm... I’m having trouble thinking right now. Mind trying again?"})
 
+
+
 from collections import Counter, defaultdict
 
 @app.route('/stats')
 def stats():
+    # 📚 Fetch read books
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -246,28 +270,32 @@ def stats():
     books = [dict(row) for row in c.fetchall()]
     conn.close()
 
+    # 📊 Basic stats
     total_books = len(books)
     ratings = [b['rating'] for b in books if b.get('rating') is not None]
     avg_rating = round(sum(ratings) / len(ratings), 2) if ratings else 0
 
+    # 🎨 Mood analysis
     moods = [b['mood'] for b in books if b.get('mood')]
     mood_counts = Counter(moods)
     most_common_mood = mood_counts.most_common(1)[0][0] if mood_counts else "None"
 
+    # 🏆 Top 3 rated books
     top_books = sorted(
         [b for b in books if b.get('rating') is not None],
         key=lambda b: b['rating'],
         reverse=True
     )[:3]
 
-    mood_books = {}
-    for mood in mood_counts:
-        mood_books[mood] = [b for b in books if b.get('mood') == mood]
+    # 📚 Books grouped by mood
+    mood_books = {
+        mood: [b for b in books if b.get('mood') == mood]
+        for mood in mood_counts
+    }
 
-    # ✅ NEW: Calculate average rating per mood
+    # 📈 Average rating per mood
     mood_rating_sums = defaultdict(float)
     mood_rating_counts = defaultdict(int)
-
     for b in books:
         if b.get('mood') and b.get('rating') is not None:
             mood_rating_sums[b['mood']] += b['rating']
@@ -278,32 +306,51 @@ def stats():
         for mood in mood_rating_sums
     }
 
-    # ✅ NEW: Calculate number of books per rating
-    books_per_rating = Counter([b['rating'] for b in books if b.get('rating') is not None])
+    # 📊 Books per rating value
+    books_per_rating = Counter(
+        [b['rating'] for b in books if b.get('rating') is not None]
+    )
 
+    # 🎨 Load mood config (emoji + color)
+    try:
+        with open('mood_config.json') as f:
+            mood_config = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        mood_config = {}
+
+    # 🎨 Extract mood colors for charts
+    mood_colors = {
+        mood: data["color"]
+        for mood, data in mood_config.items()
+        if "color" in data
+    }
+
+    # 🧠 Render stats page
     return render_template(
-    'stats.html',
-    total_books=total_books,
-    avg_rating=avg_rating,
-    most_common_mood=most_common_mood,
-    top_books=top_books,
-    mood_counts=mood_counts,
-    mood_books=mood_books,
-    avg_rating_by_mood=avg_rating_by_mood,
-    books_per_rating=books_per_rating,
-    mood_colors={
-        "Calm": "#aee1f9",
-        "Intense": "#ff6b6b",
-        "Nostalgic": "#d8a47f",
-        "Whimsical": "#cdb4db",
-        "Chill": "#d0f4f7",
-        "Uplifting": "#fff4b2",
-        "Dark": "#999999"
-    }  
-)
+        'stats.html',
+        total_books=total_books,
+        avg_rating=avg_rating,
+        most_common_mood=most_common_mood,
+        top_books=top_books,
+        mood_counts=mood_counts,
+        mood_books=mood_books,
+        avg_rating_by_mood=avg_rating_by_mood,
+        books_per_rating=books_per_rating,
+        mood_config=mood_config,
+        mood_colors=mood_colors
+    )
+
 
 @app.route('/export-pdf')
 def export_pdf():
+    from io import BytesIO
+    import base64
+    import matplotlib.pyplot as plt
+    from collections import Counter, defaultdict
+    import os
+    from flask import request
+    from weasyprint import HTML, CSS
+
     def plot_to_base64(fig):
         buf = BytesIO()
         fig.savefig(buf, format="png", bbox_inches="tight")
@@ -313,26 +360,34 @@ def export_pdf():
         plt.close(fig)
         return img_base64
 
-    # Fetch books from DB
+    # Fetch books from DB and group by status
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM books ORDER BY id DESC")
-    books = [dict(row) for row in c.fetchall()]
+
+    statuses = ['read', 'currently_reading', 'wishlist']
+    books_by_status = {}
+
+    for status in statuses:
+        c.execute("SELECT * FROM books WHERE status = ? ORDER BY id DESC", (status,))
+        books = [dict(row) for row in c.fetchall()]
+        for b in books:
+            b['cover'] = b.get('thumbnail') or ""
+        books_by_status[status] = books
+
     conn.close()
 
-    # Fix cover URLs to be absolute
-    for b in books:
-        if b.get('cover_url') and not b['cover_url'].startswith(('http://', 'https://')):
-            b['cover_url'] = request.host_url.rstrip('/') + b['cover_url']
+    # Combine all books for stats
+    all_books = books_by_status['read'] + books_by_status['currently_reading'] + books_by_status['wishlist']
 
-    # Prepare chart data
-    moods = [b['mood'] for b in books if b.get('mood')]
+    # Charts: Mood distribution
+    moods = [b['mood'] for b in all_books if b.get('mood')]
     mood_counts = Counter(moods)
 
+    # Average rating by mood
     mood_rating_sums = defaultdict(float)
     mood_rating_counts = defaultdict(int)
-    for b in books:
+    for b in all_books:
         mood = b.get('mood')
         rating = b.get('rating')
         if mood and rating is not None:
@@ -348,8 +403,9 @@ def export_pdf():
         for mood in mood_rating_sums if mood_rating_counts[mood] > 0
     }
 
+    # Books per rating
     books_per_rating = Counter()
-    for b in books:
+    for b in all_books:
         rating = b.get('rating')
         if rating is not None:
             try:
@@ -358,7 +414,7 @@ def export_pdf():
             except ValueError:
                 continue
 
-    # Generate matplotlib charts as base64
+    # Generate charts
     fig1, ax1 = plt.subplots()
     ax1.pie(mood_counts.values(), labels=mood_counts.keys(), autopct='%1.1f%%', startangle=90)
     ax1.set_title("Books by Mood")
@@ -372,43 +428,39 @@ def export_pdf():
 
     fig3, ax3 = plt.subplots()
     ax3.bar(books_per_rating.keys(), books_per_rating.values(), color="#f99")
-    ax3.set_title("Books by Rating")
+    ax3.set_title("Books per Rating")
     ax3.set_ylabel("Count")
     rating_chart = plot_to_base64(fig3)
 
-    mood_colors = {
-        "Calm": "#aee1f9",
-        "Intense": "#ff6b6b",
-        "Nostalgic": "#d8a47f",
-        "Whimsical": "#cdb4db",
-        "Chill": "#d0f4f7",
-        "Uplifting": "#fff4b2",
-        "Dark": "#999999"
-    }
-
-    # Render the export template with charts and books
+    # Render template
     rendered = render_template(
         'export.html',
-        books=books,
+        books_by_status=books_by_status,
         mood_counts=mood_counts,
         avg_rating_by_mood=avg_rating_by_mood,
         books_per_rating=books_per_rating,
-        mood_colors=mood_colors,
         pie_chart=pie_chart,
         bar_chart=bar_chart,
         rating_chart=rating_chart
     )
 
-    # Convert to PDF with CSS
     css_path = os.path.join(app.root_path, 'static', 'style.css')
     css = CSS(filename=css_path)
     pdf = HTML(string=rendered, base_url=request.base_url).write_pdf(stylesheets=[css])
 
-    # Send PDF as response
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=readshelf_export.pdf'
     return response
+
+@app.route('/delete/<int:book_id>', methods=['POST'])
+def delete_currently_reading(book_id):
+    delete_book(book_id)
+    return redirect(url_for('currently_reading'))
+
+
+
+
 
 # 🔧 Utility
 def load_mood_config():

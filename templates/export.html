@@ -6,6 +6,11 @@
   <style>
     body { font-family: 'Segoe UI', sans-serif; padding: 2rem; }
     h1, h2 { color: #333; }
+    p.summary {
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
     .book-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -18,17 +23,26 @@
       border-radius: 8px;
       background: #f9f9f9;
       break-inside: avoid;
+      text-align: center;
+    }
+    .book-cover {
+      width: 100%;
+      height: auto;
+      max-height: 160px;
+      object-fit: contain;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
     }
     .charts {
       display: flex;
-      gap: 2rem;
-      margin-top: 2rem;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      page-break-inside: avoid;
     }
     .chart-img {
-      max-width: 300px;
-      max-height: 300px;
+      max-width: 250px;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 0.5rem;
@@ -39,10 +53,27 @@
 <body>
   <h1>📚 ReadShelf Summary</h1>
 
-  <h2>Your Shelf</h2>
+  <p class="summary">
+    Here's a snapshot of your reading journey so far — neatly categorized into your completed reads, ongoing adventures, and books you're saving for later. Dive in and relive each page!
+  </p>
+
+
+{% set read_books = books_by_status.get('read', []) %}
+{% set reading_books = books_by_status.get('currently_reading', []) %}
+{% set wishlist_books = books_by_status.get('wishlist', []) %}
+
+
+
+  {% if read_books %}
+  <h2>✅ Completed Reads</h2>
   <div class="book-grid">
-    {% for book in books %}
+    {% for book in read_books %}
     <div class="book-card">
+      {% if book.cover %}
+        <img src="{{ book.cover }}" alt="Cover of {{ book.title }}" class="book-cover">
+      {% else %}
+        <div style="font-size: 3rem;">📘</div>
+      {% endif %}
       <strong>{{ book.title }}</strong><br>
       <em>{{ book.author or "Unknown Author" }}</em><br>
       Mood: {{ book.mood or "N/A" }}<br>
@@ -50,8 +81,47 @@
     </div>
     {% endfor %}
   </div>
+  {% endif %}
 
-  <h2>Stats</h2>
+  {% if reading_books %}
+  <h2>📖 Currently Reading</h2>
+  <div class="book-grid">
+    {% for book in reading_books %}
+    <div class="book-card">
+      {% if book.cover %}
+        <img src="{{ book.cover }}" alt="Cover of {{ book.title }}" class="book-cover">
+      {% else %}
+        <div style="font-size: 3rem;">📘</div>
+      {% endif %}
+      <strong>{{ book.title }}</strong><br>
+      <em>{{ book.author or "Unknown Author" }}</em><br>
+      Mood: {{ book.mood or "N/A" }}<br>
+      Rating: {{ book.rating or "N/A" }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if wishlist_books %}
+  <h2>📝 Wishlist</h2>
+  <div class="book-grid">
+    {% for book in wishlist_books %}
+    <div class="book-card">
+      {% if book.cover %}
+        <img src="{{ book.cover }}" alt="Cover of {{ book.title }}" class="book-cover">
+      {% else %}
+        <div style="font-size: 3rem;">📘</div>
+      {% endif %}
+      <strong>{{ book.title }}</strong><br>
+      <em>{{ book.author or "Unknown Author" }}</em><br>
+      Mood: {{ book.mood or "N/A" }}<br>
+      Rating: {{ book.rating or "N/A" }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>📊 Stats</h2>
   <div class="charts">
     <div>
       <h3>Books by Mood</h3>

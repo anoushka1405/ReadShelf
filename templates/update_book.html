@@ -24,5 +24,26 @@
     </form>
 
     <br><a href="/">⬅ Back to Shelf</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();  // Prevent instant reload
+
+    // Confetti 🎉
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+
+    // Submit form after short delay
+    setTimeout(() => {
+      form.submit();  // Now submit normally
+    }, 1000); // Wait 1 second
+  });
+</script>
+
 </body>
 </html>

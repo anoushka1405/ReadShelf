@@ -15,11 +15,17 @@
             {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#f2f2f2'}) %}
 
             <div class="book" style="background-color: {{ mood_data.color }}">
+                {% if book[9] %}
+                    <img src="{{ book[9] }}" alt="Cover of {{ book[1] }}" class="book-cover" style="max-height: 160px; border-radius: 6px; margin-bottom: 0.5rem;">
+                {% else %}
+                    <div style="font-size: 3rem;">📘</div>
+                {% endif %}
                 <div class="mood-emoji">{{ mood_data.emoji }}</div>
                 <div class="title"><strong>{{ book[1] }}</strong></div>
                 <div class="author"><em>{{ book[2] }}</em></div>
                 <div class="rating">⭐ {{ book[5] }}/5</div>
             </div>
+            
         {% else %}
             <p class="empty-msg">Your wishlist is empty. Add some books!</p>
         {% endfor %}

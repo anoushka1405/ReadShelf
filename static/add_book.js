@@ -110,7 +110,11 @@ manualThumbnail.addEventListener("input", () => {
         let missingFields = [];
     
         if (!title) missingFields.push("Title");
-        if (!thumbnail) missingFields.push("Thumbnail");
+        
+        if (!thumbnail && status === "read") {
+            missingFields.push("Thumbnail");
+        }
+        
     
         if (status === "read") {
             const mood = moodSelect.value;

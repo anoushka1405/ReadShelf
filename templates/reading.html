@@ -25,23 +25,56 @@
         </select>
     </form>
 
-    <div class="bookshelf wishlist">
+    <div class="bookshelf">
         {% for book in books %}
             {% set mood = book[3] %}
             {% set mood_data = mood_config.get(mood, {'emoji': '📘', 'color': '#e0f7ff'}) %}
 
-            <div class="book" style="background-color: {{ mood_data.color }}">
+            <div class="book" 
+                 style="background-color: {{ mood_data.color }};" 
+                 onclick='showReadingModal({ 
+                     id: {{ book[0] }},
+                     title: {{ book[1]|tojson }},
+                     author: {{ book[2]|tojson }},
+                     description: {{ book[8]|tojson }},
+                     thumbnail: {{ book[9]|tojson }}
+                 })'>
+                 
+                {% if book[9] %}
+                    <img src="{{ book[9] }}" alt="Cover of {{ book[1] }}" class="book-cover" style="max-height: 160px; border-radius: 6px; margin-bottom: 0.5rem;">
+                {% else %}
+                    <div style="font-size: 3rem;">📘</div>
+                {% endif %}
+
                 <div class="mood-emoji">{{ mood_data.emoji }}</div>
                 <div class="title"><strong>{{ book[1] }}</strong></div>
                 <div class="author"><em>{{ book[2] }}</em></div>
-                <div class="rating">⭐ {{ book[5] }}/5</div>
-                <a href="{{ url_for('update_book', book_id=book[0]) }}" class="mark-read-link" data-href="{{ url_for('update_book', book_id=book[0]) }}">
-                    🎉 Mark as Read
-                </a>
             </div>
         {% else %}
             <p class="empty-msg">You’re not reading anything right now. Add a current read!</p>
         {% endfor %}
+    </div>
+
+    <!-- Modal -->
+    <div id="readingModal" class="modal">
+        <div class="modal-content">
+            <img id="readingModalThumbnail" src="" alt="Book Cover" class="modal-cover">
+
+            <div class="modal-details">
+                <span class="close-btn" onclick="closeReadingModal()">&times;</span>
+                <h2 id="readingModalTitle"></h2>
+                <p><strong>Author:</strong> <span id="readingModalAuthor"></span></p>
+                <p><strong>Description:</strong></p>
+                <p id="readingModalDescription" class="expandable"></p>
+                <a id="updateBookLink" class="mark-read-btn" href="#">🎉 Mark as Read</a><br><br>
+
+                  
+
+                <form id="deleteReadingForm" method="POST">
+                    <button type="submit" class="delete-btn">🗑️ Delete Book</button>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

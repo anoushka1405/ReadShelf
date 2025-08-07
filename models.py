@@ -39,6 +39,9 @@ def init_db():
 def add_book(title, author, mood, review, rating, status,
              page_count=None, description=None, thumbnail=None, categories=None):
     """Add a new book to the database."""
+
+    status = status.replace(" ", "_").lower()
+    
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute('''
